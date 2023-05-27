@@ -21,22 +21,33 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public Set<T> getRoots() {
-    // TODO: why might you use a hashset here:
-    Set<T> roots = verticies;
+    // TODO: why might you use a hashset here?
+    Set<T> roots = new HashSet<T>(verticies);
 
     for (Edge<T> edge : edges) {
       roots.remove(edge.getDestination());
     }
 
-    return roots;
+    if (this.isEquivalence()) {
+      for (T vertex : verticies) {
+        Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
+        T currentMinNumber = this.getMinimum(currentEquivalenceClass);
+        if (!roots.contains(currentMinNumber)) {
+          roots.add(currentMinNumber);
+          // TODO: Do the roots need to be in order
+        }
+      }
+    }
 
-    // TODO: Implement equivalence class thign
+    return roots;
   }
 
   public boolean isReflexive() {
-    boolean hasSelfLoop = false;
 
     for (T vertex : verticies) {
+      // Initialise
+      boolean hasSelfLoop = false;
+
       for (Edge<T> edge : edges) {
         if (edge.getSource() == edge.getDestination() && edge.getSource() == vertex) {
           hasSelfLoop = true;
@@ -56,7 +67,7 @@ public class Graph<T extends Comparable<T>> {
     Edge<T> opposite;
 
     for (Edge<T> edge : edges) {
-      opposite = new Edge(edge.getDestination(), edge.getSource());
+      opposite = new Edge<T>(edge.getDestination(), edge.getSource());
       // TODO: Note, overided equals method to make contains work
       if (!edges.contains(opposite)) {
         return false;
@@ -69,8 +80,8 @@ public class Graph<T extends Comparable<T>> {
   public boolean isTransitive() {
     for (Edge<T> edge : edges) {
       for (T vertex : verticies) {
-        Edge<T> edgeB = new Edge(edge.getDestination(), vertex);
-        Edge<T> edgeC = new Edge(edge.getSource(), vertex);
+        Edge<T> edgeB = new Edge<T>(edge.getDestination(), vertex);
+        Edge<T> edgeC = new Edge<T>(edge.getSource(), vertex);
 
         if (edges.contains(edgeB) && !edges.contains(edgeC)) {
           return false;
@@ -83,7 +94,7 @@ public class Graph<T extends Comparable<T>> {
   public boolean isAntiSymmetric() {
 
     for (Edge<T> edge : edges) {
-      Edge<T> edgeB = new Edge(edge.getDestination(), edge.getSource());
+      Edge<T> edgeB = new Edge<T>(edge.getDestination(), edge.getSource());
 
       if (edges.contains(edgeB) && edge != edgeB) {
         return false;
@@ -132,18 +143,31 @@ public class Graph<T extends Comparable<T>> {
   }
 
   private boolean isSameEquivalenceClass(T currentVertex, T vertex) {
-    // TODO: Is this correct? Does it have to be an equivalence relation???\
     // TODO: I can probably make this simpler
 
     if (!this.isEquivalence()) {
       return false;
     }
 
-    Edge<T> edgeA = new Edge(currentVertex, vertex);
-    Edge<T> edgeB = new Edge(vertex, currentVertex);
+    Edge<T> edgeA = new Edge<T>(currentVertex, vertex);
+    Edge<T> edgeB = new Edge<T>(vertex, currentVertex);
     if (!edges.contains(edgeA) || !edges.contains(edgeB)) {
       return false;
     }
     return true;
+  }
+
+  private T getMinimum(Set<T> numbers) {
+    // TODO: Is this bad code
+    int currentMinNumber = Integer.MAX_VALUE;
+    T currentMinT = null;
+
+    for (T number : numbers) {
+      if ((int) number < currentMinNumber) {
+        currentMinNumber = (int) number;
+        currentMinT = number;
+      }
+    }
+    return currentMinT;
   }
 }
