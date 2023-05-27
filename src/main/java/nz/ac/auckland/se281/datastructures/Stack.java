@@ -69,4 +69,11 @@ public class Stack<T> {
 
     return sb.toString();
   }
+
+  public void unloadStack(Stack<T> receiverStack) {
+    int sizeOfStackToUnload = this.size;
+    for (int i = 0; i < sizeOfStackToUnload; i++) {
+      receiverStack.push(this.pop());
+    }
+  }
 }

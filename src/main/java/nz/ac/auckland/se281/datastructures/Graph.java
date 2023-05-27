@@ -166,7 +166,37 @@ public class Graph<T extends Comparable<T>> {
 
   public List<T> iterativeDepthFirstSearch() {
     Set<T> roots = new HashSet<T>(this.getRoots());
-    throw new UnsupportedOperationException();
+    Stack<T> stack = new Stack<T>();
+
+    // This stack is for reversing the order of things
+    Stack<T> holdingStack = new Stack<T>();
+
+    // Initialise visited with the root values
+    List<T> visited = new ArrayList<T>(roots);
+
+    for (T currentRoot : roots) {
+      holdingStack.push(currentRoot);
+    }
+    // Unload the holding stack onto the stack, which subsequently reverses the order
+    holdingStack.unloadStack(stack);
+
+    while (!stack.isEmpty()) {
+      T currentNode = stack.pop();
+      if (!visited.contains(currentNode)) {
+        visited.add(currentNode);
+      }
+
+      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+
+      for (T destination : currentDestinations) {
+        if (!visited.contains(destination)) {
+          holdingStack.push(destination);
+        }
+      }
+      holdingStack.unloadStack(stack);
+    }
+
+    return visited;
   }
 
   public List<T> recursiveBreadthFirstSearch() {
