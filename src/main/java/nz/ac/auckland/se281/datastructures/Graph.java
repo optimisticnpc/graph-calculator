@@ -1,5 +1,6 @@
 package nz.ac.auckland.se281.datastructures;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,17 @@ public class Graph<T extends Comparable<T>> {
         }
       }
     }
+
+    // TODO: why doesn't gpt4's code work?
+    // Set<Set<T>> seenEquivalenceClasses = new HashSet<>();
+    // for (T vertex : verticies) {
+    //   Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
+    //   if (currentEquivalenceClass.size() > 1
+    //       && !seenEquivalenceClasses.contains(currentEquivalenceClass)) {
+    //     roots.add(getMinimum(currentEquivalenceClass));
+    //     seenEquivalenceClasses.add(currentEquivalenceClass);
+    //   }
+    // }
 
     return roots;
   }
@@ -122,13 +134,38 @@ public class Graph<T extends Comparable<T>> {
     return equivalenceClass;
   }
 
+  /**
+   * @return
+   */
   public List<T> iterativeBreadthFirstSearch() {
-    // TODO: Task 2.
-    throw new UnsupportedOperationException();
+    Set<T> roots = new HashSet<T>(this.getRoots());
+
+    Queue<T> queue = new Queue<T>();
+
+    // Initialise visited with the root values
+    List<T> visited = new ArrayList<T>(roots);
+
+    for (T currentRoot : roots) {
+      queue.enqueue(currentRoot);
+    }
+
+    while (!queue.isEmpty()) {
+      T currentNode = queue.dequeue();
+      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+
+      for (T destination : currentDestinations) {
+        if (!visited.contains(destination)) {
+          visited.add(destination);
+          queue.enqueue(destination);
+        }
+      }
+    }
+
+    return visited;
   }
 
   public List<T> iterativeDepthFirstSearch() {
-    // TODO: Task 2.
+    Set<T> roots = new HashSet<T>(this.getRoots());
     throw new UnsupportedOperationException();
   }
 
@@ -158,16 +195,40 @@ public class Graph<T extends Comparable<T>> {
   }
 
   private T getMinimum(Set<T> numbers) {
-    // TODO: Is this bad code
-    int currentMinNumber = Integer.MAX_VALUE;
     T currentMinT = null;
-
     for (T number : numbers) {
-      if ((int) number < currentMinNumber) {
-        currentMinNumber = (int) number;
+      if (currentMinT == null || number.compareTo(currentMinT) < 0) {
         currentMinT = number;
       }
     }
     return currentMinT;
+  }
+
+  // private T getMinimum(Set<T> numbers) {
+  //   // TODO: Is this bad code
+  //   int currentMinNumber = Integer.MAX_VALUE;
+  //   T currentMinT = null;
+
+  //   for (T number : numbers) {
+  //     if ((int) number < currentMinNumber) {
+  //       currentMinNumber = (int) number;
+  //       currentMinT = number;
+  //     }
+  //   }
+  //   return currentMinT;
+  // }
+
+  // TODO: Why can't this be static
+  private Set<T> findAllDestinations(T vertex) {
+    Set<T> destinations = new HashSet<T>();
+
+    // TODO: How does == work with T things
+    for (Edge<T> edge : edges) {
+      if (vertex == edge.getSource()) {
+        destinations.add(edge.getDestination());
+      }
+    }
+
+    return destinations;
   }
 }
