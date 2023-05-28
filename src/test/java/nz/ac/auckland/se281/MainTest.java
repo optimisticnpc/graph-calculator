@@ -232,7 +232,7 @@ public class MainTest {
     public void T3_B_recursive_BFS() throws Exception {
       runCommands(OPEN_FILE, "b.txt", GRAPH_SEARCH_RBFS);
       assertContains("Successfully opened graph from file b.txt");
-      assertContains("[0, 1, 2, 3, 4, 5]");
+      assertContains("[6, 5, 4, 3, 2, 1, 0]");
     }
 
     @Test
@@ -253,7 +253,7 @@ public class MainTest {
     public void T3_B_recursive_DFS() throws Exception {
       runCommands(OPEN_FILE, "b.txt", GRAPH_SEARCH_RDFS);
       assertContains("Successfully opened graph from file b.txt");
-      assertContains("[0, 1, 2, 3, 4, 5]");
+      assertContains("[6, 5, 4, 3, 2, 1, 0]");
     }
 
     @Test

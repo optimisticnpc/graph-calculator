@@ -108,7 +108,7 @@ public class Graph<T extends Comparable<T>> {
     for (Edge<T> edge : edges) {
       Edge<T> edgeB = new Edge<T>(edge.getDestination(), edge.getSource());
 
-      if (edges.contains(edgeB) && edge != edgeB) {
+      if (edges.contains(edgeB) && (edge != edgeB)) {
         return false;
       }
     }
@@ -200,13 +200,77 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public List<T> recursiveBreadthFirstSearch() {
-    // TODO: Task 3.
-    throw new UnsupportedOperationException();
+    Set<T> roots = new HashSet<T>(this.getRoots());
+
+    Queue<T> queue = new Queue<T>();
+
+    // Initialise visited with the root values
+    List<T> visited = new ArrayList<T>(roots);
+
+    for (T currentRoot : roots) {
+      queue.enqueue(currentRoot);
+    }
+
+    visited = recursiveBfsCall(queue, visited);
+    return visited;
+  }
+
+  private List<T> recursiveBfsCall(Queue<T> queue, List<T> visited) {
+    if (!queue.isEmpty()) {
+      T currentNode = queue.dequeue();
+      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+      for (T destination : currentDestinations) {
+        if (!visited.contains(destination)) {
+          visited.add(destination);
+          queue.enqueue(destination);
+        }
+      }
+      visited = recursiveBfsCall(queue, visited);
+    }
+
+    return visited;
   }
 
   public List<T> recursiveDepthFirstSearch() {
-    // TODO: Task 3.
-    throw new UnsupportedOperationException();
+    Set<T> roots = new HashSet<T>(this.getRoots());
+    Stack<T> stack = new Stack<T>();
+
+    // This stack is for reversing the order of things
+    Stack<T> holdingStack = new Stack<T>();
+
+    // Initialise visited with the root values
+    List<T> visited = new ArrayList<T>(roots);
+
+    for (T currentRoot : roots) {
+      holdingStack.push(currentRoot);
+    }
+    // Unload the holding stack onto the stack, this reverses the order
+    holdingStack.unloadStack(stack);
+
+    visited = recursiveDfsCall(stack, visited);
+
+    return visited;
+  }
+
+  private List<T> recursiveDfsCall(Stack<T> stack, List<T> visited) {
+    if (!stack.isEmpty()) {
+      Stack<T> holdingStack = new Stack<T>();
+      T currentNode = stack.pop();
+      if (!visited.contains(currentNode)) {
+        visited.add(currentNode);
+      }
+      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+
+      for (T destination : currentDestinations) {
+        if (!visited.contains(destination)) {
+          holdingStack.push(destination);
+        }
+      }
+      holdingStack.unloadStack(stack);
+      visited = recursiveDfsCall(stack, visited);
+    }
+
+    return visited;
   }
 
   private boolean isSameEquivalenceClass(T currentVertex, T vertex) {
