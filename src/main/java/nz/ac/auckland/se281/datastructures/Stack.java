@@ -48,29 +48,9 @@ public class Stack<T> {
     return size == 0;
   }
 
-  @Override
-  public String toString() {
-    if (size == 0) {
-      return "[]";
-    }
-
-    StringBuilder sb = new StringBuilder();
-    sb.append("[" + top.getData());
-
-    Node<T> temp = top;
-
-    for (int i = 1; i < size; i++) {
-      temp = temp.getNext();
-      int currentNumber = (int) temp.getData();
-      sb.append(", " + currentNumber);
-    }
-
-    sb.append("]");
-
-    return sb.toString();
-  }
-
   public void unloadStack(Stack<T> receiverStack) {
+    // Unload all the contents of the stack onto a receiver stack
+    // This reverses the order
     int sizeOfStackToUnload = this.size;
     for (int i = 0; i < sizeOfStackToUnload; i++) {
       receiverStack.push(this.pop());

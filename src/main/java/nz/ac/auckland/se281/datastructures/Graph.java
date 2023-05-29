@@ -150,8 +150,8 @@ public class Graph<T extends Comparable<T>> {
     }
 
     while (!queue.isEmpty()) {
-      T currentNode = queue.dequeue();
-      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+      Node<T> currentNode = queue.dequeue();
+      Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
 
       for (T destination : currentDestinations) {
         if (!visited.contains(destination)) {
@@ -217,8 +217,8 @@ public class Graph<T extends Comparable<T>> {
 
   private List<T> recursiveBfsCall(Queue<T> queue, List<T> visited) {
     if (!queue.isEmpty()) {
-      T currentNode = queue.dequeue();
-      Set<T> currentDestinations = this.findAllDestinations(currentNode);
+      Node<T> currentNode = queue.dequeue();
+      Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
       for (T destination : currentDestinations) {
         if (!visited.contains(destination)) {
           visited.add(destination);
