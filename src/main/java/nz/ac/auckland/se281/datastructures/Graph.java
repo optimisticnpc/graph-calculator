@@ -2,7 +2,6 @@ package nz.ac.auckland.se281.datastructures;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,21 +16,8 @@ import java.util.TreeSet;
 public class Graph<T extends Comparable<T>> {
   private Set<T> verticies;
   private Set<Edge<T>> edges;
-  private HashMap<T, LinkedList<Edge<T>>> adjacencyMap;
 
   public Graph(Set<T> verticies, Set<Edge<T>> edges) {
-    adjacencyMap = new HashMap<T, LinkedList<Edge<T>>>();
-
-    for (T vertex : verticies) {
-      LinkedList<Edge<T>> list = new LinkedList<>();
-      for (Edge<T> edge : edges) {
-        if (edge.getSource().equals(vertex)) {
-          list.add(edge);
-        }
-      }
-      adjacencyMap.put(vertex, list);
-    }
-
     this.verticies = verticies;
     this.edges = edges;
   }
@@ -286,34 +272,19 @@ public class Graph<T extends Comparable<T>> {
   private T getMinimum(Set<T> numbers) {
     T currentMinT = null;
     for (T number : numbers) {
-      if (currentMinT == null || number.compareTo(currentMinT) < 0) {
+      if (currentMinT == null
+          || Integer.compare(
+                  Integer.parseInt((String) number), Integer.parseInt((String) currentMinT))
+              < 0) {
         currentMinT = number;
       }
     }
     return currentMinT;
   }
 
-  // TODO: Fix this!! Numerical order instead of lexigraphical
-
-  // private T getMinimum(Set<T> numbers) {
-  //   // TODO: Is this bad code
-  //   int currentMinNumber = Integer.MAX_VALUE;
-  //   T currentMinT = null;
-
-  //   for (T number : numbers) {
-  //     if ((int) number < currentMinNumber) {
-  //       currentMinNumber = (int) number;
-  //       currentMinT = number;
-  //     }
-  //   }
-  //   return currentMinT;
-  // }
-
-  // TODO: Why can't this be static
   private Set<T> findAllDestinations(T vertex) {
     TreeSet<T> destinations = createSortedSet();
 
-    // TODO: How does == work with T things
     for (Edge<T> edge : edges) {
       if (vertex.equals(edge.getSource())) {
         destinations.add(edge.getDestination());

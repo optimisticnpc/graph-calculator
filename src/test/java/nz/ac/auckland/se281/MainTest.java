@@ -349,6 +349,13 @@ public class MainTest {
       runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_RDFS);
       assertContains("[0, 1, 3, 4, 5, 2, 6]");
     }
+
+    @Test
+    public void TY_10_C_modified_roots_test_minimum() throws Exception {
+      runCommands(OPEN_FILE, "c-modified.txt", LIST_ROOT_VERTICIES);
+      assertContains("Successfully opened graph from file c-modified.txt");
+      assertContains("[0, 2]");
+    }
   }
 
   public static class PeerTests extends CliTest {
