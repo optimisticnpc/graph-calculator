@@ -1,11 +1,12 @@
 package nz.ac.auckland.se281.datastructures;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * A graph that is composed of a set of verticies and edges.
@@ -37,7 +38,7 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public Set<T> getRoots() {
-    Set<T> roots = new LinkedHashSet<T>(verticies);
+    Set<T> roots = new HashSet<T>(verticies);
 
     // Remove vertices that don't have an in-degree of 0
     for (Edge<T> edge : edges) {
@@ -53,9 +54,19 @@ public class Graph<T extends Comparable<T>> {
       }
     }
 
-    // TODO: Order the roots
+    // Transform HashSet to TreeSet to sort elements numerically
+    Set<T> sortedRoots =
+        new TreeSet<T>(
+            new Comparator<T>() {
+              @Override
+              public int compare(T o1, T o2) {
+                return Integer.compare(
+                    Integer.parseInt((String) o1), Integer.parseInt((String) o2));
+              }
+            });
+    sortedRoots.addAll(roots);
 
-    return roots;
+    return sortedRoots;
   }
 
   public boolean isReflexive() {
