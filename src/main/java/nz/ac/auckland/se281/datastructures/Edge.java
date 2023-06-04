@@ -35,16 +35,30 @@ public class Edge<T> {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     Edge<T> other = (Edge<T>) obj;
     if (source == null) {
-      if (other.source != null) return false;
-    } else if (!source.equals(other.source)) return false;
+      if (other.source != null) {
+        return false;
+      }
+    } else if (!source.equals(other.source)) {
+      return false;
+    }
     if (destination == null) {
-      if (other.destination != null) return false;
-    } else if (!destination.equals(other.destination)) return false;
+      if (other.destination != null) {
+        return false;
+      }
+    } else if (!destination.equals(other.destination)) {
+      return false;
+    }
     return true;
   }
 }

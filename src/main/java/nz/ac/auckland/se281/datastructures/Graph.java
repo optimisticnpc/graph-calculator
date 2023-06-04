@@ -48,6 +48,7 @@ public class Graph<T extends Comparable<T>> {
       sortedRoots.remove(edge.getDestination());
     }
 
+    // If it the graph is an equivalence class, add the minimum value in each class
     if (this.isEquivalence()) {
       for (T vertex : vertices) {
         Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
@@ -72,6 +73,8 @@ public class Graph<T extends Comparable<T>> {
       boolean hasSelfLoop = false;
 
       for (Edge<T> edge : edges) {
+        // If the edge is a self loop, and the self loop is starts from the vertex
+        // then set the the vertex has having a self loop
         if (edge.getSource().equals(edge.getDestination()) && edge.getSource().equals(vertex)) {
           hasSelfLoop = true;
         }
@@ -97,6 +100,7 @@ public class Graph<T extends Comparable<T>> {
     Edge<T> opposite;
 
     for (Edge<T> edge : edges) {
+      // if A to B exists but not B to A, return false
       opposite = new Edge<T>(edge.getDestination(), edge.getSource());
       if (!edges.contains(opposite)) {
         return false;
@@ -117,10 +121,13 @@ public class Graph<T extends Comparable<T>> {
   public boolean isTransitive() {
     for (Edge<T> edge : edges) {
       for (T vertex : vertices) {
-        Edge<T> edgeB = new Edge<T>(edge.getDestination(), vertex);
-        Edge<T> edgeC = new Edge<T>(edge.getSource(), vertex);
+        // Let any edge be A to B
+        // If B to C exists where C is any other vertex and A to C doesn't exist, then the graph is
+        // not transitive
+        Edge<T> edgeBtoC = new Edge<T>(edge.getDestination(), vertex);
+        Edge<T> edgeAtoC = new Edge<T>(edge.getSource(), vertex);
 
-        if (edges.contains(edgeB) && !edges.contains(edgeC)) {
+        if (edges.contains(edgeBtoC) && !edges.contains(edgeAtoC)) {
           return false;
         }
       }
@@ -138,9 +145,11 @@ public class Graph<T extends Comparable<T>> {
    */
   public boolean isAntiSymmetric() {
     for (Edge<T> edge : edges) {
-      Edge<T> edgeB = new Edge<T>(edge.getDestination(), edge.getSource());
+      Edge<T> edgeBtoA = new Edge<T>(edge.getDestination(), edge.getSource());
 
-      if (edges.contains(edgeB) && (!edge.equals(edgeB))) {
+      // If A to B exist and B to A exist and A does not equal B, then the graph is not
+      // antisymmetric
+      if (edges.contains(edgeBtoA) && (!edge.equals(edgeBtoA))) {
         return false;
       }
     }
@@ -172,9 +181,16 @@ public class Graph<T extends Comparable<T>> {
    * @return The set of vertices in the equivalence class of the given vertex.
    */
   public Set<T> getEquivalenceClass(T vertex) {
+    // If it is not an equivalence relation, return an empty set
+    if (!isEquivalence()) {
+      return new TreeSet<T>();
+    }
+
+    // Initialise a sorted set with all the vertices
     Set<T> equivalenceClass = createSortedSet(vertices);
 
     for (T currentVertex : vertices) {
+      // If the vertex is not in the same quivalence class, remove the vertex
       if (!this.isSameEquivalenceClass(currentVertex, vertex)) {
         equivalenceClass.remove(currentVertex);
       }
@@ -193,26 +209,31 @@ public class Graph<T extends Comparable<T>> {
    * @return A list of vertices visited during the breadth-first search.
    */
   public List<T> iterativeBreadthFirstSearch() {
+    // Get the roots in numerical order
     TreeSet<T> roots = createSortedSet(getRoots());
     Queue<T> queue = new Queue<T>();
     List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
+      // Add the current root to the queue
       queue.enqueue(currentRoot);
       visited.add(currentRoot);
 
+      // Fully explore the child nodes of the root
       while (!queue.isEmpty()) {
-        moveOneLayerBFS(queue, visited);
+        moveOneLayerBfs(queue, visited);
       }
     }
 
     return visited;
   }
 
-  private void moveOneLayerBFS(Queue<T> queue, List<T> visited) {
+  private void moveOneLayerBfs(Queue<T> queue, List<T> visited) {
+    // Find all the child nodes of the vertex at the front of the queue
     Node<T> currentNode = queue.dequeue();
     Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
 
+    // Search the child nodes and add their destinations to the visited list and queue
     for (T destination : currentDestinations) {
       if (!visited.contains(destination)) {
         visited.add(destination);
@@ -230,26 +251,26 @@ public class Graph<T extends Comparable<T>> {
    * @return A list of vertices visited during the breadth-first search.
    */
   public List<T> recursiveBreadthFirstSearch() {
+    // Get the roots in numerical order
     TreeSet<T> roots = createSortedSet(getRoots());
     Queue<T> queue = new Queue<T>();
     List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
+      // Add the current root to the queue
       queue.enqueue(currentRoot);
       visited.add(currentRoot);
-      visited = recursiveBfsCall(queue, visited);
+      recursiveBfsCall(queue, visited);
     }
 
     return visited;
   }
 
-  private List<T> recursiveBfsCall(Queue<T> queue, List<T> visited) {
+  private void recursiveBfsCall(Queue<T> queue, List<T> visited) {
     if (!queue.isEmpty()) {
-      moveOneLayerBFS(queue, visited);
-      visited = recursiveBfsCall(queue, visited);
+      moveOneLayerBfs(queue, visited);
+      recursiveBfsCall(queue, visited);
     }
-
-    return visited;
   }
 
   /**
@@ -262,22 +283,24 @@ public class Graph<T extends Comparable<T>> {
    * @return A list of vertices visited during the depth-first search.
    */
   public List<T> iterativeDepthFirstSearch() {
+    // Get the roots in numerical order
     TreeSet<T> roots = createSortedSet(getRoots());
     Stack<T> stack = new Stack<T>();
     List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
+      // Add current root to the stack
       stack.push(currentRoot);
 
       while (!stack.isEmpty()) {
-        moveOneLayerDFS(stack, visited);
+        moveOneLayerDfs(stack, visited);
       }
     }
 
     return visited;
   }
 
-  private void moveOneLayerDFS(Stack<T> stack, List<T> visited) {
+  private void moveOneLayerDfs(Stack<T> stack, List<T> visited) {
     // This stack is for reversing the order of things
     Stack<T> holdingStack = new Stack<T>();
 
@@ -293,7 +316,7 @@ public class Graph<T extends Comparable<T>> {
         holdingStack.push(destination);
       }
     }
-    // Unload the holding stack onto the stack, which subsequently reverses the order
+    // Unload the holding stack onto the stack, this reverses the order
     holdingStack.unloadStackOnto(stack);
   }
 
@@ -306,38 +329,36 @@ public class Graph<T extends Comparable<T>> {
    * @return A list of vertices visited during the depth-first search.
    */
   public List<T> recursiveDepthFirstSearch() {
+    // Get the roots in numerical order
     TreeSet<T> roots = createSortedSet(getRoots());
     Stack<T> stack = new Stack<T>();
     List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
       stack.push(currentRoot);
-      visited = recursiveDfsCall(stack, visited);
+      recursiveDfsCall(stack, visited);
     }
 
     return visited;
   }
 
-  private List<T> recursiveDfsCall(Stack<T> stack, List<T> visited) {
+  private void recursiveDfsCall(Stack<T> stack, List<T> visited) {
     if (!stack.isEmpty()) {
-      moveOneLayerDFS(stack, visited);
-      visited = recursiveDfsCall(stack, visited);
+      moveOneLayerDfs(stack, visited);
+      recursiveDfsCall(stack, visited);
     }
-
-    return visited;
   }
 
   private boolean isSameEquivalenceClass(T currentVertex, T vertex) {
-    // TODO: I can probably make this simpler
-
+    // If the grpah isn't an equivalence relation, return false
     if (!this.isEquivalence()) {
       return false;
     }
 
+    // If the two vertices are in the same equivalence class then an edge will exist from any one of
+    // the vertices to the other
     Edge<T> edgeA = new Edge<T>(currentVertex, vertex);
-    Edge<T> edgeB = new Edge<T>(vertex, currentVertex);
-
-    if (!edges.contains(edgeA) || !edges.contains(edgeB)) {
+    if (!edges.contains(edgeA)) {
       return false;
     }
 
@@ -347,6 +368,7 @@ public class Graph<T extends Comparable<T>> {
   private T getMinimum(Set<T> numbers) {
     T currentMinT = null;
     for (T number : numbers) {
+      // Compare the two numbers, assume they are integers in String type
       if (currentMinT == null
           || Integer.compare(
                   Integer.parseInt((String) number), Integer.parseInt((String) currentMinT))
@@ -361,6 +383,8 @@ public class Graph<T extends Comparable<T>> {
     TreeSet<T> destinations = createSortedSet();
 
     for (Edge<T> edge : edges) {
+      // If the vertex is the source of the edge
+      // Then save the destination of the edge
       if (vertex.equals(edge.getSource())) {
         destinations.add(edge.getDestination());
       }
@@ -372,6 +396,7 @@ public class Graph<T extends Comparable<T>> {
   private TreeSet<T> createSortedSet() {
     return new TreeSet<T>(
         new Comparator<T>() {
+          // Overide the compare method ensure sorting in numerical order
           @Override
           public int compare(T o1, T o2) {
             return Integer.compare(Integer.parseInt((String) o1), Integer.parseInt((String) o2));
@@ -379,6 +404,7 @@ public class Graph<T extends Comparable<T>> {
         });
   }
 
+  // Create a sorted set with initial values
   private TreeSet<T> createSortedSet(Set<T> set) {
     TreeSet<T> sortedSet = createSortedSet();
     sortedSet.addAll(set);
