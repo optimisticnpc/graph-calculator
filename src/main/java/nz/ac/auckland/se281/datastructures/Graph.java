@@ -3,7 +3,6 @@ package nz.ac.auckland.se281.datastructures;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -38,11 +37,11 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public Set<T> getRoots() {
-    Set<T> roots = new HashSet<T>(verticies);
+    TreeSet<T> sortedRoots = createSortedSet(verticies);
 
     // Remove vertices that don't have an in-degree of 0
     for (Edge<T> edge : edges) {
-      roots.remove(edge.getDestination());
+      sortedRoots.remove(edge.getDestination());
       // TODO: Implement checking for minimum of 1 out-degree
       // Do we even need to??
     }
@@ -51,22 +50,9 @@ public class Graph<T extends Comparable<T>> {
       for (T vertex : verticies) {
         Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
         T currentMinNumber = this.getMinimum(currentEquivalenceClass);
-        roots.add(currentMinNumber);
+        sortedRoots.add(currentMinNumber);
       }
     }
-
-    // Transform HashSet to TreeSet to sort elements numerically
-    Set<T> sortedRoots =
-        new TreeSet<T>(
-            new Comparator<T>() {
-              // Create an anonymous class to override the compare() method
-              @Override
-              public int compare(T o1, T o2) {
-                return Integer.compare(
-                    Integer.parseInt((String) o1), Integer.parseInt((String) o2));
-              }
-            });
-    sortedRoots.addAll(roots);
 
     return sortedRoots;
   }
@@ -78,7 +64,7 @@ public class Graph<T extends Comparable<T>> {
       boolean hasSelfLoop = false;
 
       for (Edge<T> edge : edges) {
-        if (edge.getSource() == edge.getDestination() && edge.getSource() == vertex) {
+        if (edge.getSource().equals(edge.getDestination()) && edge.getSource().equals(vertex)) {
           hasSelfLoop = true;
         }
       }
@@ -125,7 +111,7 @@ public class Graph<T extends Comparable<T>> {
     for (Edge<T> edge : edges) {
       Edge<T> edgeB = new Edge<T>(edge.getDestination(), edge.getSource());
 
-      if (edges.contains(edgeB) && (edge != edgeB)) {
+      if (edges.contains(edgeB) && (!edge.equals(edgeB))) {
         return false;
       }
     }
@@ -141,7 +127,7 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public Set<T> getEquivalenceClass(T vertex) {
-    Set<T> equivalenceClass = new HashSet<>(verticies);
+    Set<T> equivalenceClass = createSortedSet(verticies);
 
     for (T currentVertex : verticies) {
       if (!this.isSameEquivalenceClass(currentVertex, vertex)) {
@@ -155,8 +141,7 @@ public class Graph<T extends Comparable<T>> {
    * @return
    */
   public List<T> iterativeBreadthFirstSearch() {
-    Set<T> roots = new TreeSet<T>(this.getRoots());
-    // TODO: do I need to make the comparator always apply
+    TreeSet<T> roots = createSortedSet(getRoots());
 
     Queue<T> queue = new Queue<T>();
 
@@ -183,7 +168,7 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public List<T> iterativeDepthFirstSearch() {
-    Set<T> roots = new HashSet<T>(this.getRoots());
+    TreeSet<T> roots = createSortedSet(getRoots());
     Stack<T> stack = new Stack<T>();
 
     // This stack is for reversing the order of things
@@ -216,7 +201,7 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public List<T> recursiveBreadthFirstSearch() {
-    Set<T> roots = new TreeSet<T>(this.getRoots());
+    TreeSet<T> roots = createSortedSet(getRoots());
 
     Queue<T> queue = new Queue<T>();
 
@@ -248,7 +233,8 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public List<T> recursiveDepthFirstSearch() {
-    Set<T> roots = new TreeSet<T>(this.getRoots());
+    TreeSet<T> roots = createSortedSet(getRoots());
+
     Stack<T> stack = new Stack<T>();
 
     List<T> visited = new ArrayList<T>();
@@ -325,15 +311,31 @@ public class Graph<T extends Comparable<T>> {
 
   // TODO: Why can't this be static
   private Set<T> findAllDestinations(T vertex) {
-    Set<T> destinations = new TreeSet<T>();
+    TreeSet<T> destinations = createSortedSet();
 
     // TODO: How does == work with T things
     for (Edge<T> edge : edges) {
-      if (vertex == edge.getSource()) {
+      if (vertex.equals(edge.getSource())) {
         destinations.add(edge.getDestination());
       }
     }
 
     return destinations;
+  }
+
+  public TreeSet<T> createSortedSet() {
+    return new TreeSet<T>(
+        new Comparator<T>() {
+          @Override
+          public int compare(T o1, T o2) {
+            return Integer.compare(Integer.parseInt((String) o1), Integer.parseInt((String) o2));
+          }
+        });
+  }
+
+  public TreeSet<T> createSortedSet(Set<T> set) {
+    TreeSet<T> sortedSet = createSortedSet();
+    sortedSet.addAll(set);
+    return sortedSet;
   }
 }
