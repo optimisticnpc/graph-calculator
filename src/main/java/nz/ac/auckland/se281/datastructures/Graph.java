@@ -28,8 +28,6 @@ public class Graph<T extends Comparable<T>> {
     // Remove vertices that don't have an in-degree of 0
     for (Edge<T> edge : edges) {
       sortedRoots.remove(edge.getDestination());
-      // TODO: Implement checking for minimum of 1 out-degree
-      // Do we even need to??
     }
 
     if (this.isEquivalence()) {
@@ -69,7 +67,6 @@ public class Graph<T extends Comparable<T>> {
 
     for (Edge<T> edge : edges) {
       opposite = new Edge<T>(edge.getDestination(), edge.getSource());
-      // TODO: Note, overided equals method to make contains work
       if (!edges.contains(opposite)) {
         return false;
       }
@@ -138,52 +135,23 @@ public class Graph<T extends Comparable<T>> {
       visited.add(currentRoot);
 
       while (!queue.isEmpty()) {
-        Node<T> currentNode = queue.dequeue();
-        Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
-
-        for (T destination : currentDestinations) {
-          if (!visited.contains(destination)) {
-            visited.add(destination);
-            queue.enqueue(destination);
-          }
-        }
+        moveOneLayerBFS(queue, visited);
       }
     }
 
     return visited;
   }
 
-  public List<T> iterativeDepthFirstSearch() {
-    TreeSet<T> roots = createSortedSet(getRoots());
-    Stack<T> stack = new Stack<T>();
+  private void moveOneLayerBFS(Queue<T> queue, List<T> visited) {
+    Node<T> currentNode = queue.dequeue();
+    Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
 
-    // This stack is for reversing the order of things
-    Stack<T> holdingStack = new Stack<T>();
-
-    List<T> visited = new ArrayList<T>();
-
-    for (T currentRoot : roots) {
-      stack.push(currentRoot);
-
-      while (!stack.isEmpty()) {
-        T currentNode = stack.pop();
-        if (!visited.contains(currentNode)) {
-          visited.add(currentNode);
-        }
-
-        Set<T> currentDestinations = this.findAllDestinations(currentNode);
-
-        for (T destination : currentDestinations) {
-          if (!visited.contains(destination)) {
-            holdingStack.push(destination);
-          }
-        }
-        // Unload the holding stack onto the stack, which subsequently reverses the order
-        holdingStack.unloadStackOnto(stack);
+    for (T destination : currentDestinations) {
+      if (!visited.contains(destination)) {
+        visited.add(destination);
+        queue.enqueue(destination);
       }
     }
-
-    return visited;
   }
 
   public List<T> recursiveBreadthFirstSearch() {
@@ -204,18 +172,48 @@ public class Graph<T extends Comparable<T>> {
 
   private List<T> recursiveBfsCall(Queue<T> queue, List<T> visited) {
     if (!queue.isEmpty()) {
-      Node<T> currentNode = queue.dequeue();
-      Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
-      for (T destination : currentDestinations) {
-        if (!visited.contains(destination)) {
-          visited.add(destination);
-          queue.enqueue(destination);
-        }
-      }
+      moveOneLayerBFS(queue, visited);
       visited = recursiveBfsCall(queue, visited);
     }
 
     return visited;
+  }
+
+  public List<T> iterativeDepthFirstSearch() {
+    TreeSet<T> roots = createSortedSet(getRoots());
+    Stack<T> stack = new Stack<T>();
+
+    List<T> visited = new ArrayList<T>();
+
+    for (T currentRoot : roots) {
+      stack.push(currentRoot);
+
+      while (!stack.isEmpty()) {
+        moveOneLayerDFS(stack, visited);
+      }
+    }
+
+    return visited;
+  }
+
+  private void moveOneLayerDFS(Stack<T> stack, List<T> visited) {
+    // This stack is for reversing the order of things
+    Stack<T> holdingStack = new Stack<T>();
+
+    T currentNode = stack.pop();
+    if (!visited.contains(currentNode)) {
+      visited.add(currentNode);
+    }
+
+    Set<T> currentDestinations = this.findAllDestinations(currentNode);
+
+    for (T destination : currentDestinations) {
+      if (!visited.contains(destination)) {
+        holdingStack.push(destination);
+      }
+    }
+    // Unload the holding stack onto the stack, which subsequently reverses the order
+    holdingStack.unloadStackOnto(stack);
   }
 
   public List<T> recursiveDepthFirstSearch() {
@@ -234,20 +232,7 @@ public class Graph<T extends Comparable<T>> {
 
   private List<T> recursiveDfsCall(Stack<T> stack, List<T> visited) {
     if (!stack.isEmpty()) {
-      // Initialise a "holding stack" to help reverse the order of things
-      Stack<T> holdingStack = new Stack<T>();
-      T currentNode = stack.pop();
-      if (!visited.contains(currentNode)) {
-        visited.add(currentNode);
-      }
-      Set<T> currentDestinations = this.findAllDestinations(currentNode);
-
-      for (T destination : currentDestinations) {
-        if (!visited.contains(destination)) {
-          holdingStack.push(destination);
-        }
-      }
-      holdingStack.unloadStackOnto(stack);
+      moveOneLayerDFS(stack, visited);
       visited = recursiveDfsCall(stack, visited);
     }
 
