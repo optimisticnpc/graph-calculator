@@ -43,7 +43,8 @@ public class Graph<T extends Comparable<T>> {
     // Remove vertices that don't have an in-degree of 0
     for (Edge<T> edge : edges) {
       roots.remove(edge.getDestination());
-      // Implement checking for minimum of 1 out-degree
+      // TODO: Implement checking for minimum of 1 out-degree
+      // Do we even need to??
     }
 
     if (this.isEquivalence()) {
@@ -58,6 +59,7 @@ public class Graph<T extends Comparable<T>> {
     Set<T> sortedRoots =
         new TreeSet<T>(
             new Comparator<T>() {
+              // Create an anonymous class to override the compare() method
               @Override
               public int compare(T o1, T o2) {
                 return Integer.compare(
@@ -153,25 +155,26 @@ public class Graph<T extends Comparable<T>> {
    * @return
    */
   public List<T> iterativeBreadthFirstSearch() {
-    Set<T> roots = new HashSet<T>(this.getRoots());
+    Set<T> roots = new TreeSet<T>(this.getRoots());
+    // TODO: do I need to make the comparator always apply
 
     Queue<T> queue = new Queue<T>();
 
-    // Initialise visited with the root values
-    List<T> visited = new ArrayList<T>(roots);
+    List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
       queue.enqueue(currentRoot);
-    }
+      visited.add(currentRoot);
 
-    while (!queue.isEmpty()) {
-      Node<T> currentNode = queue.dequeue();
-      Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
+      while (!queue.isEmpty()) {
+        Node<T> currentNode = queue.dequeue();
+        Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
 
-      for (T destination : currentDestinations) {
-        if (!visited.contains(destination)) {
-          visited.add(destination);
-          queue.enqueue(destination);
+        for (T destination : currentDestinations) {
+          if (!visited.contains(destination)) {
+            visited.add(destination);
+            queue.enqueue(destination);
+          }
         }
       }
     }
@@ -186,47 +189,45 @@ public class Graph<T extends Comparable<T>> {
     // This stack is for reversing the order of things
     Stack<T> holdingStack = new Stack<T>();
 
-    // Initialise visited with the root values
-    List<T> visited = new ArrayList<T>(roots);
+    List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
-      holdingStack.push(currentRoot);
-    }
-    // Unload the holding stack onto the stack, which subsequently reverses the order
-    holdingStack.unloadStack(stack);
+      stack.push(currentRoot);
 
-    while (!stack.isEmpty()) {
-      T currentNode = stack.pop();
-      if (!visited.contains(currentNode)) {
-        visited.add(currentNode);
-      }
-
-      Set<T> currentDestinations = this.findAllDestinations(currentNode);
-
-      for (T destination : currentDestinations) {
-        if (!visited.contains(destination)) {
-          holdingStack.push(destination);
+      while (!stack.isEmpty()) {
+        T currentNode = stack.pop();
+        if (!visited.contains(currentNode)) {
+          visited.add(currentNode);
         }
+
+        Set<T> currentDestinations = this.findAllDestinations(currentNode);
+
+        for (T destination : currentDestinations) {
+          if (!visited.contains(destination)) {
+            holdingStack.push(destination);
+          }
+        }
+        // Unload the holding stack onto the stack, which subsequently reverses the order
+        holdingStack.unloadStackOnto(stack);
       }
-      holdingStack.unloadStack(stack);
     }
 
     return visited;
   }
 
   public List<T> recursiveBreadthFirstSearch() {
-    Set<T> roots = new HashSet<T>(this.getRoots());
+    Set<T> roots = new TreeSet<T>(this.getRoots());
 
     Queue<T> queue = new Queue<T>();
 
     // Initialise visited with the root values
-    List<T> visited = new ArrayList<T>(roots);
+    List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
       queue.enqueue(currentRoot);
+      visited.add(currentRoot);
+      visited = recursiveBfsCall(queue, visited);
     }
-
-    visited = recursiveBfsCall(queue, visited);
     return visited;
   }
 
@@ -247,28 +248,21 @@ public class Graph<T extends Comparable<T>> {
   }
 
   public List<T> recursiveDepthFirstSearch() {
-    Set<T> roots = new HashSet<T>(this.getRoots());
+    Set<T> roots = new TreeSet<T>(this.getRoots());
     Stack<T> stack = new Stack<T>();
 
-    // This stack is for reversing the order of things
-    Stack<T> holdingStack = new Stack<T>();
-
-    // Initialise visited with the root values
-    List<T> visited = new ArrayList<T>(roots);
+    List<T> visited = new ArrayList<T>();
 
     for (T currentRoot : roots) {
-      holdingStack.push(currentRoot);
+      stack.push(currentRoot);
+      visited = recursiveDfsCall(stack, visited);
     }
-    // Unload the holding stack onto the stack, this reverses the order
-    holdingStack.unloadStack(stack);
-
-    visited = recursiveDfsCall(stack, visited);
-
     return visited;
   }
 
   private List<T> recursiveDfsCall(Stack<T> stack, List<T> visited) {
     if (!stack.isEmpty()) {
+      // Initialise a "holding stack" to help reverse the order of things
       Stack<T> holdingStack = new Stack<T>();
       T currentNode = stack.pop();
       if (!visited.contains(currentNode)) {
@@ -281,7 +275,7 @@ public class Graph<T extends Comparable<T>> {
           holdingStack.push(destination);
         }
       }
-      holdingStack.unloadStack(stack);
+      holdingStack.unloadStackOnto(stack);
       visited = recursiveDfsCall(stack, visited);
     }
 
@@ -331,7 +325,7 @@ public class Graph<T extends Comparable<T>> {
 
   // TODO: Why can't this be static
   private Set<T> findAllDestinations(T vertex) {
-    Set<T> destinations = new HashSet<T>();
+    Set<T> destinations = new TreeSet<T>();
 
     // TODO: How does == work with T things
     for (Edge<T> edge : edges) {

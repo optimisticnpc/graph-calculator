@@ -47,7 +47,7 @@ public class Stack<T> {
     return size == 0;
   }
 
-  public void unloadStack(Stack<T> receiverStack) {
+  public void unloadStackOnto(Stack<T> receiverStack) {
     // Unload all the contents of the stack onto a receiver stack
     // This reverses the order
     int sizeOfStackToUnload = this.size;

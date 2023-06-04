@@ -273,7 +273,6 @@ public class MainTest {
     @Test
     public void TY_01_test_one_IBFS() throws Exception {
       runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_IBFS);
-      assertContains("Successfully opened graph from file c.txt");
       assertContains(
           "[1, 2, 3, 4, 5, 10, 6, 7, 9, 8, 11, 15, 22, 29, 16, 23, 30, 13, 20, 27, 12, 19, 26, 14,"
               + " 21, 28, 17, 24, 31, 18, 25, 32]");
@@ -281,8 +280,7 @@ public class MainTest {
 
     @Test
     public void TY_02_test_one_RBFS() throws Exception {
-      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_IBFS);
-      assertContains("Successfully opened graph from file c.txt");
+      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_RBFS);
       assertContains(
           "[1, 2, 3, 4, 5, 10, 6, 7, 9, 8, 11, 15, 22, 29, 16, 23, 30, 13, 20, 27, 12, 19, 26, 14,"
               + " 21, 28, 17, 24, 31, 18, 25, 32]");
@@ -290,8 +288,7 @@ public class MainTest {
 
     @Test
     public void TY_03_test_one_IDFS() throws Exception {
-      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_IBFS);
-      assertContains("Successfully opened graph from file c.txt");
+      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_IDFS);
       assertContains(
           "[1, 2, 5, 15, 22, 29, 10, 16, 23, 30, 3, 6, 13, 20, 27, 7, 12, 19, 26, 9, 14, 21, 28, 4,"
               + " 8, 17, 24, 31, 11, 18, 25, 32]");
@@ -299,11 +296,58 @@ public class MainTest {
 
     @Test
     public void TY_04_test_one_RDFS() throws Exception {
-      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_IBFS);
-      assertContains("Successfully opened graph from file c.txt");
+      runCommands(OPEN_FILE, "test-one.txt", GRAPH_SEARCH_RDFS);
       assertContains(
           "[1, 2, 5, 15, 22, 29, 10, 16, 23, 30, 3, 6, 13, 20, 27, 7, 12, 19, 26, 9, 14, 21, 28, 4,"
               + " 8, 17, 24, 31, 11, 18, 25, 32]");
+    }
+
+    @Test
+    public void TY_05_test_two_subgraphs_IBFS() throws Exception {
+      runCommands(OPEN_FILE, "2-subgraphs.txt", GRAPH_SEARCH_IBFS);
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
+    }
+
+    @Test
+    public void TY_06_test_two_subgraphs_RBFS() throws Exception {
+      runCommands(OPEN_FILE, "2-subgraphs.txt", GRAPH_SEARCH_RBFS);
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
+    }
+
+    @Test
+    public void TY_07_test_two_subgraphs_IDFS() throws Exception {
+      runCommands(OPEN_FILE, "2-subgraphs.txt", GRAPH_SEARCH_IDFS);
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
+    }
+
+    @Test
+    public void TY_08_test_two_subgraphs_RDFS() throws Exception {
+      runCommands(OPEN_FILE, "2-subgraphs.txt", GRAPH_SEARCH_RDFS);
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
+    }
+
+    @Test
+    public void TY_09_test_useless_root_IBFS() throws Exception {
+      runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_IBFS);
+      assertContains("[0, 1, 2, 3, 4, 5, 6]");
+    }
+
+    @Test
+    public void TY_10_test_useless_root_RBFS() throws Exception {
+      runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_RBFS);
+      assertContains("[0, 1, 2, 3, 4, 5, 6]");
+    }
+
+    @Test
+    public void TY_11_test_useless_root_IDFS() throws Exception {
+      runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_IDFS);
+      assertContains("[0, 1, 3, 4, 5, 2, 6]");
+    }
+
+    @Test
+    public void TY_09_test_useless_root_RDFS() throws Exception {
+      runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_RDFS);
+      assertContains("[0, 1, 3, 4, 5, 2, 6]");
     }
   }
 
