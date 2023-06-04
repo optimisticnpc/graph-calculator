@@ -5,7 +5,6 @@ public class Stack<T> {
   private int size;
 
   public Stack() {
-    this.top = null;
     this.size = 0;
   }
 

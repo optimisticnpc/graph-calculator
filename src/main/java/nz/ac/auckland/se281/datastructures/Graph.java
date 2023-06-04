@@ -1,7 +1,9 @@
 package nz.ac.auckland.se281.datastructures;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,41 +17,43 @@ import java.util.Set;
 public class Graph<T extends Comparable<T>> {
   private Set<T> verticies;
   private Set<Edge<T>> edges;
+  private HashMap<T, LinkedList<Edge<T>>> adjacencyMap;
 
   public Graph(Set<T> verticies, Set<Edge<T>> edges) {
+    adjacencyMap = new HashMap<T, LinkedList<Edge<T>>>();
+
+    for (T vertex : verticies) {
+      LinkedList<Edge<T>> list = new LinkedList<>();
+      for (Edge<T> edge : edges) {
+        if (edge.getSource().equals(vertex)) {
+          list.add(edge);
+        }
+      }
+      adjacencyMap.put(vertex, list);
+    }
+
     this.verticies = verticies;
     this.edges = edges;
   }
 
   public Set<T> getRoots() {
-    // TODO: why might you use a hashset here?
-    Set<T> roots = new HashSet<T>(verticies);
+    Set<T> roots = new LinkedHashSet<T>(verticies);
 
+    // Remove vertices that don't have an in-degree of 0
     for (Edge<T> edge : edges) {
       roots.remove(edge.getDestination());
+      // Implement checking for minimum of 1 out-degree
     }
 
     if (this.isEquivalence()) {
       for (T vertex : verticies) {
         Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
         T currentMinNumber = this.getMinimum(currentEquivalenceClass);
-        if (!roots.contains(currentMinNumber)) {
-          roots.add(currentMinNumber);
-          // TODO: Do the roots need to be in order
-        }
+        roots.add(currentMinNumber);
       }
     }
 
-    // TODO: why doesn't gpt4's code work?
-    // Set<Set<T>> seenEquivalenceClasses = new HashSet<>();
-    // for (T vertex : verticies) {
-    //   Set<T> currentEquivalenceClass = getEquivalenceClass(vertex);
-    //   if (currentEquivalenceClass.size() > 1
-    //       && !seenEquivalenceClasses.contains(currentEquivalenceClass)) {
-    //     roots.add(getMinimum(currentEquivalenceClass));
-    //     seenEquivalenceClasses.add(currentEquivalenceClass);
-    //   }
-    // }
+    // TODO: Order the roots
 
     return roots;
   }
@@ -297,6 +301,8 @@ public class Graph<T extends Comparable<T>> {
     }
     return currentMinT;
   }
+
+  // TODO: Fix this!! Numerical order instead of lexigraphical
 
   // private T getMinimum(Set<T> numbers) {
   //   // TODO: Is this bad code

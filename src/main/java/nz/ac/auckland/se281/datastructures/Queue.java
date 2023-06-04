@@ -12,15 +12,13 @@ public class Queue<T> {
   public void enqueue(T data) {
     Node<T> newNode = new Node<>(data);
 
-    // TODO: Test if removing this gives me an excpetion
     // If there are no nodes in the queue, set the node as front
     if (size == 0) {
       front = newNode;
     } else {
       // If there are already nodes in the queue
-      // Join the new node to the rear by setting next and prev
-      newNode.setNext(rear);
-      rear.setPrev(newNode);
+      // Attach the new node to the rear of the queue
+      rear.setNext(newNode);
     }
     // Set the new node as rear
     rear = newNode;
@@ -33,16 +31,13 @@ public class Queue<T> {
       return null;
     }
     Node<T> temp = front;
-    // If there is one node, return that node
+    // If there is one node set front and rear to null
     if (size == 1) {
       front = null;
       rear = null;
-      size--;
-      return temp;
     }
 
-    front = temp.getPrev();
-    front.setNext(null);
+    front = temp.getNext();
     size--;
     return temp;
   }
@@ -71,7 +66,7 @@ public class Queue<T> {
     Node<T> temp = front;
 
     for (int i = 1; i < size; i++) {
-      temp = temp.getPrev();
+      temp = temp.getNext();
       int currentNumber = (int) temp.getData();
       sb.append(", " + currentNumber);
     }
