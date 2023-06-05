@@ -1,5 +1,7 @@
 package nz.ac.auckland.se281.datastructures;
 
+import java.util.Objects;
+
 /**
  * An edge in a graph that connects two verticies.
  *
@@ -35,30 +37,20 @@ public class Edge<T> {
 
   @Override
   public boolean equals(Object obj) {
+    // If the object is compared with itself then return true
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
+
+    if (!(obj instanceof Edge)) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
+
+    // typecast obj to Edge so that we can compare data members
+    @SuppressWarnings("unchecked")
     Edge<T> other = (Edge<T>) obj;
-    if (source == null) {
-      if (other.source != null) {
-        return false;
-      }
-    } else if (!source.equals(other.source)) {
-      return false;
-    }
-    if (destination == null) {
-      if (other.destination != null) {
-        return false;
-      }
-    } else if (!destination.equals(other.destination)) {
-      return false;
-    }
-    return true;
+
+    // Objects.equals() checks for nulls
+    return Objects.equals(source, other.source) && Objects.equals(destination, other.destination);
   }
 }

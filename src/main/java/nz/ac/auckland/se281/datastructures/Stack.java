@@ -31,7 +31,7 @@ public class Stack<T> {
   }
 
   /**
-   * Pops the element from the top of the stack.
+   * Removes the element from the top of the stack.
    *
    * @return The popped element, or {@code null} if the stack is empty.
    */
@@ -41,7 +41,9 @@ public class Stack<T> {
       return null;
     }
 
+    // Set the top element as a temproary variable.
     Node<T> temp = top;
+    // Set the top of the stack to the next node
     top = top.getNext();
     size--;
     return temp.getData();

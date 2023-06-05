@@ -1,7 +1,9 @@
 package nz.ac.auckland.se281.datastructures;
 
+// TODO: IF I DONT USE THE LINKED LIST, remove it
+
 /**
- * A linked list data structure that stores elements ny linking each element to the elements in
+ * A linked list data structure that stores elements by linking each element to the elements in
  * front and behind it.
  *
  * @param <T> The type of elements stored in the linked list.
@@ -25,9 +27,12 @@ public class LinkedList<T> {
     Node<T> newNode = new Node<>(data);
 
     if (size == 0) {
+      // If the linked list is empty, set the new node as both head and tail
       head = newNode;
       tail = newNode;
     } else {
+      // If there are already nodes in the linked list
+      // Attach the new node to the rear of the list
       tail.setNext(newNode);
       newNode.setPrev(tail);
       tail = newNode;
@@ -67,6 +72,7 @@ public class LinkedList<T> {
     Node<T> nodeBefore = currentNode.getPrev();
     Node<T> nodeAfter = currentNode;
 
+    // Link the new node to the nodes before and after it
     nodeBefore.setNext(nodeToInsert);
     nodeToInsert.setPrev(nodeBefore);
     nodeToInsert.setNext(nodeAfter);
@@ -81,11 +87,13 @@ public class LinkedList<T> {
    */
   public void remove(int index) {
     if (index == 0) {
+      // If removing the first node, update the head
       head = head.getNext();
       size--;
       return;
     }
     if (index == size - 1) {
+      // If removing the last node, update the tail
       tail = tail.getPrev();
       size--;
       return;
@@ -96,10 +104,10 @@ public class LinkedList<T> {
       nodeToRemove = nodeToRemove.getNext();
     }
     // Find the node before and after the node we want to remove
-    // Link them together
     Node<T> nodeBefore = nodeToRemove.getPrev();
     Node<T> nodeAfter = nodeToRemove.getNext();
 
+    // Link the nodes before and after the removed node together
     nodeBefore.setNext(nodeAfter);
     nodeAfter.setPrev(nodeBefore);
     size--;

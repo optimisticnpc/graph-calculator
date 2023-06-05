@@ -101,6 +101,7 @@ public class Queue<T> {
 
     Node<T> temp = front;
 
+    // Iterate through the elements in the queue
     for (int i = 1; i < size; i++) {
       temp = temp.getNext();
       sb.append(", " + temp.getData());
