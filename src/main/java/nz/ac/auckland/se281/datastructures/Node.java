@@ -8,7 +8,6 @@ package nz.ac.auckland.se281.datastructures;
 public class Node<T> {
   private T data;
   private Node<T> next;
-  private Node<T> prev;
 
   /**
    * Constructs a node with the specified data.
@@ -53,23 +52,5 @@ public class Node<T> {
    */
   public void setNext(Node<T> next) {
     this.next = next;
-  }
-
-  /**
-   * Retrieves the previous node in the linked structure.
-   *
-   * @return The previous node.
-   */
-  public Node<T> getPrev() {
-    return prev;
-  }
-
-  /**
-   * Sets the previous node in the linked structure.
-   *
-   * @param prev The previous node.
-   */
-  public void setPrev(Node<T> prev) {
-    this.prev = prev;
   }
 }

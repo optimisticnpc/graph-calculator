@@ -190,7 +190,7 @@ public class Graph<T extends Comparable<T>> {
     Set<T> equivalenceClass = createSortedSet(vertices);
 
     for (T currentVertex : vertices) {
-      // If the vertex is not in the same quivalence class, remove the vertex
+      // If the vertex is not in the same equivalence class, remove the vertex
       if (!this.isSameEquivalenceClass(currentVertex, vertex)) {
         equivalenceClass.remove(currentVertex);
       }

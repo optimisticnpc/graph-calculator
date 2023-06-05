@@ -13,19 +13,40 @@ public class Edge<T> {
   private T source;
   private T destination;
 
+  /**
+   * Constructs an edge between the specified source and destination vertices.
+   *
+   * @param source The source vertex.
+   * @param destination The destination vertex.
+   */
   public Edge(T source, T destination) {
     this.source = source;
     this.destination = destination;
   }
 
+  /**
+   * Retrieves the source vertex of the edge.
+   *
+   * @return The source vertex.
+   */
   public T getSource() {
     return source;
   }
 
+  /**
+   * Retrieves the destination vertex of the edge.
+   *
+   * @return The destination vertex.
+   */
   public T getDestination() {
     return destination;
   }
 
+  /**
+   * Computes the hash code of the edge.
+   *
+   * @return The hash code of the edge.
+   */
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -35,6 +56,12 @@ public class Edge<T> {
     return result;
   }
 
+  /**
+   * Checks if the edge is equal to another object.
+   *
+   * @param obj The object to compare.
+   * @return {@code true} if the edge is equal to the object, {@code false} otherwise.
+   */
   @Override
   public boolean equals(Object obj) {
     // If the object is compared with itself then return true
@@ -46,7 +73,7 @@ public class Edge<T> {
       return false;
     }
 
-    // typecast obj to Edge so that we can compare data members
+    // Typecast obj to Edge so that we can compare data members
     @SuppressWarnings("unchecked")
     Edge<T> other = (Edge<T>) obj;
 
