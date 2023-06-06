@@ -345,16 +345,100 @@ public class MainTest {
     }
 
     @Test
-    public void TY_09_test_useless_root_RDFS() throws Exception {
+    public void TY_12_test_useless_root_RDFS() throws Exception {
       runCommands(OPEN_FILE, "useless-root.txt", GRAPH_SEARCH_RDFS);
       assertContains("[0, 1, 3, 4, 5, 2, 6]");
     }
 
     @Test
-    public void TY_10_C_modified_roots_test_minimum() throws Exception {
+    public void TY_13_C_modified_roots_test_minimum() throws Exception {
       runCommands(OPEN_FILE, "c-modified.txt", LIST_ROOT_VERTICIES);
       assertContains("Successfully opened graph from file c-modified.txt");
       assertContains("[0, 2]");
+    }
+
+    @Test
+    public void TY_14_antisymmetry_one_edge() throws Exception {
+      runCommands(OPEN_FILE, "antisymmetry-one-edge.txt", CHECK_ANTISYMMETRY);
+      assertContains("Successfully opened graph from file antisymmetry-one-edge.txt");
+      assertContains("The graph is antisymmetric");
+    }
+
+    @Test
+    public void TY_15_oval_roots() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", LIST_ROOT_VERTICIES);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[1]");
+    }
+
+    @Test
+    public void TY_16_oval_reflexivity() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", CHECK_REFLEXIVITY);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("The graph is NOT reflexive");
+    }
+
+    @Test
+    public void TY_17_oval_symmetry() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", CHECK_SYMMETRY);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("The graph is NOT symmetric");
+    }
+
+    @Test
+    public void TY_18_oval_antisymmetry() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", CHECK_ANTISYMMETRY);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("The graph is NOT antisymmetric");
+    }
+
+    @Test
+    public void TY_19_oval_transitivity() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", CHECK_TRANSITIVITY);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("The graph is NOT transitive");
+    }
+
+    @Test
+    public void TY_20_oval_equivalence() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", CHECK_EQUIVALENCE);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("The graph is NOT an equivalence relation");
+    }
+
+    @Test
+    public void TY_21_oval_equivalence_class_0() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", COMPUTE_EQUIVALENCE, 2);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[]");
+    }
+
+    @Test
+    public void TY_22_oval_iterative_BFS() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", GRAPH_SEARCH_IBFS);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[1, 2, 3, 7, 4, 6, 5]");
+    }
+
+    @Test
+    public void TY_23_oval_iterative_DFS() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", GRAPH_SEARCH_IDFS);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
+    }
+
+    @Test
+    public void TY_24_oval_recursive_BFS() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", GRAPH_SEARCH_RBFS);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[1, 2, 3, 7, 4, 6, 5]");
+    }
+
+    @Test
+    public void TY_25_oval_recursive_DFS() throws Exception {
+      runCommands(OPEN_FILE, "oval.txt", GRAPH_SEARCH_RDFS);
+      assertContains("Successfully opened graph from file oval.txt");
+      assertContains("[1, 2, 3, 4, 5, 6, 7]");
     }
   }
 

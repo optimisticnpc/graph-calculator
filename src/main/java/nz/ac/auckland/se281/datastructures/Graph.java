@@ -74,7 +74,7 @@ public class Graph<T extends Comparable<T>> {
 
       for (Edge<T> edge : edges) {
         // If the edge is a self loop, and the self loop is starts from the vertex
-        // then set the the vertex has having a self loop
+        // then set the the vertex as having a self loop
         if (edge.getSource().equals(edge.getDestination()) && edge.getSource().equals(vertex)) {
           hasSelfLoop = true;
         }
@@ -233,7 +233,7 @@ public class Graph<T extends Comparable<T>> {
     Node<T> currentNode = queue.dequeue();
     Set<T> currentDestinations = this.findAllDestinations(currentNode.getData());
 
-    // Search the child nodes and add their destinations to the visited list and queue
+    // Search the child nodes and add their children to the visited list and queue
     for (T destination : currentDestinations) {
       if (!visited.contains(destination)) {
         visited.add(destination);
